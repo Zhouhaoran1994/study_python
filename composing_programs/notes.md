@@ -115,8 +115,6 @@ golden_ratio = improve(golden_update, square_close_to_successor)
 
 improve把所有细节都留给了update和close两个函数，它只约定了最基本的模式，即[对比->更新]
 
-*(我觉得approx_eq也是一个general method，因为它有通用性)*
-
 ## Nested Functions (嵌套函数)
 
 假如我们要求一个数的平方根，用代码应该怎么写？ 我们知道，假如一个数不是完全平方根，那么开根号会出现无限循环，例如√2
@@ -160,8 +158,111 @@ def improve(update, close, guess=1):
 # 这个就是"终点"
 def approx_eq(x, y, tolerance=1e-15):
     return abs(x - y) < tolerance
+
+
+result = sqrt(2)
 ~~~
 
-*(其实就是不断的用二分法计算x和a，然后把结果再计算平方，最后和原来的a对比，直到满足approx_eq)*
+*(其实就是不断的用二分法计算x，然后把结果再计算平方，最后和原来的a对比，直到满足approx_eq)*
 
 ## Functions as Return Values (返回其他函数的函数)
+
+An important feature of lexically scoped programming languages is that locally defined functions maintain their parent
+environment when they are returned.
+
+这儿有点抽象，先看例子比较好理解
+
+~~~python
+def square(x):
+    return x * x
+
+
+def successor(x):
+    return x + 1
+
+
+def compose1(f, g):
+    def h(x):
+        return g(f(x))
+
+    return h
+
+
+square_successor = compose1(square, successor)
+result = square_successor(12)
+~~~
+
+好吧还是很抽象不知道他在干嘛，但这儿有意思的是compose1在返回h的时候，连同它的父环境（parent
+environment）一起保存并返回了，所以h(12)依旧可以调用g(f(12))，即successor(square(12))
+
+## Currying (柯里化)
+
+有的时候，我们可能要将f(x, y)变成g(x)(y)，而得到同样的结果，区别是f接受2个参数，而g只需要1个
+
+下面的例子将pow(2,3)变成curried_pow(2)(3)
+
+~~~python
+def curried_pow(x):
+    def h(y):
+        return pow(x, y)
+
+    return h
+
+
+result = curried_pow(2)(3)
+~~~
+
+其实也是利用了Functions as Return Values例子中的特性，返回h的时候，连同父环境也保存下来了，即x=2。
+
+composing programs的作者更变态，他说你不仅能手写一个curried function，还可以写两个函数来自动转换
+
+~~~python
+def curry2(f):
+    def h(x):
+        def g(y):
+            return f(x, y)
+
+        return g
+
+    return h
+
+
+curried_pow = curry2(pow)
+result = curried_pow(2)(3)  # f=pow, x=2, y=3
+
+
+def uncurry2(f):
+    def h(x, y):
+        return f(x)(y)
+
+    return h
+
+
+pow = uncurry2(curried_pow)
+result = pow(2, 3)  # f=curried_pow, x=2, y=3
+~~~
+
+## Function Decorators (装饰器)
+
+Python里有一个higher order functions的应用，就是装饰器。
+
+例如这个trace装饰器，用来打印函数的名字和传参
+
+~~~python
+def trace(fn):
+    def wrapped(x):
+        print('-> ', fn, '(', x, ')')
+        return fn(x)
+
+    return wrapped
+
+
+@trace
+def triple(x):
+    return x * 3
+
+
+triple(3)
+~~~
+
+这里@triple做了一件事，triple = trace(triple)，其实也是把wrapped的父环境保存了下来，所以才知道fn=triple
