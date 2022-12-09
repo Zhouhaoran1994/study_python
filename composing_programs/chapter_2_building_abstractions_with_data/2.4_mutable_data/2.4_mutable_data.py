@@ -1,12 +1,12 @@
 a = 1
 b = a
-b = b + 10
-print(a, b)
+b += 1
+print(a, b) # 1, 2
 
-q = [1, 2]
-o = q
-o.append('hhh')
-print(q, o)
+a = [1, 2]
+b = a
+b += [3]
+print(a, b) #[1, 2, 3] [1, 2, 3]
 
 nest = [1, 2]
 suits = ['heart', 'diamond', 'spade', 'club']
@@ -23,7 +23,6 @@ def make_withdraw(balance):
     """Return a withdraw function that draws down balance with each call."""
 
     def withdraw(amount):
-        nonlocal balance  # Declare the name "balance" nonlocal
         if amount > balance:
             return 'Insufficient funds'
         balance -= amount
