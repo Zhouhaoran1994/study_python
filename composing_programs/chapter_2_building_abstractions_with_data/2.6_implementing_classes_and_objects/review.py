@@ -4,7 +4,7 @@ def make_instance(cls):
             return attributes[name]
         else:
             value = cls['get'](name)
-            return bind_method(value, instance)
+            return bind_value(instance, value)
 
     def set_value(name, value):
         attributes[name] = value
@@ -14,7 +14,7 @@ def make_instance(cls):
     return instance
 
 
-def bind_method(value, instance):
+def bind_value(instance, value):
     if callable(value):
         def method(*args):
             return value(instance, *args)
@@ -29,7 +29,8 @@ def make_class(attributes, base_class=None):
         if name in attributes:
             return attributes[name]
         else:
-            return base_class['get'](name)
+            value = base_class['get'](name)
+            return value
 
     def set_value(name, value):
         attributes[name] = value
@@ -52,25 +53,48 @@ def init_instance(cls, *args):
 def make_account_class():
     interest = 0.02
 
-    def __init__(self, name, age):
-        self['set']('holder', name)
+    def __init__(self, holder_name):
         self['set']('balance', 0)
-        self['set']('age', age)
+        self['set']('holder_name', holder_name)
 
     def deposit(self, amount):
         new_balance = self['get']('balance') + amount
         self['set']('balance', new_balance)
-        return self['get']('balance')
+        return new_balance
 
-    # dispatch = {'deposit': deposit}
     return make_class(locals())
 
 
+def get_account_holder(account):
+    return account['get']('holder_name')
+
+
+def deposit(account, amount):
+    return account['get']('deposit')(amount)
+
+
+def check_balance(account):
+    return account['get']('balance')
+
+
 Account = make_account_class()
-jack_account = Account['new']('Jack', 9)
-print(jack_account['get']('balance'))
-jack_account['get']('deposit')(50)
-print(jack_account['get']('balance'))
-print(jack_account['get']('age'))
+bill_account = Account['new']('Bill')
+print(get_account_holder(bill_account))
+print(check_balance(bill_account))
+print(deposit(bill_account, 150))
 
 
+def make_checking_account_class():
+    interest = 0.01
+    deposit_fee = 1
+
+    def deposit(self, amount):
+        deposit_fee = self['get']('deposit_fee')
+        return Account['get']('deposit')(self, amount - deposit_fee)
+
+    return make_class(locals(), Account)
+
+
+CheckingAccount = make_checking_account_class()
+jack_account = CheckingAccount['new']('Spock')
+print(deposit(jack_account, 50))
