@@ -17,6 +17,10 @@ class Account:
         # return [self.balance[i] + other.balance[i] for i in range(len(self.balance))]
         return list(map(add, self.balance, other.balance))
 
+    def __getitem__(self, item):
+        if item == 1:
+            return self.balance
+
 # a = Account()
 # print(a.__repr__())
 # print(repr(Account))
@@ -31,3 +35,9 @@ if not Account('Jack'):
 rich = Account('rich', [1000, 2000, 3000])
 poor = Account('poor',[10, 20, 30])
 print(rich + poor)
+
+Account.__bool__ = lambda self: self.balance != 0
+
+Account.__getitem__ = lambda self, item: self.balance if item == 2 else None
+
+print(poor[2])
