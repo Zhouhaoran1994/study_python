@@ -23,3 +23,5 @@ def average(x, y):
 
 print(sqrt(2))
 
+l = [1]
+print(l[1])

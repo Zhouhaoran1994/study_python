@@ -65,6 +65,15 @@ def extend_link(s, t):
         return Link(s.first, extend_link(s.rest, t))
 
 
+def join_link(s, separator):
+    if s is Link.empty:
+        return ""
+    elif s.rest is Link.empty:
+        return str(s.first)
+    else:
+        return str(s.first) + separator + join_link(s.rest, separator)
+
+
 if __name__ == '__main__':
     s = Link(3, Link(4, Link(5)))
     # Link.__repr__ = link_expression
