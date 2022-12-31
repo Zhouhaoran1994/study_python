@@ -29,6 +29,7 @@ def valid_symbol(s):
             return False
     return True
 
+
 def next_candidate_token(line, k):
     """A tuple (tok, k'), where tok is the next substring of line at or
     after position k that could be a token (assuming it passes a validity
@@ -41,15 +42,16 @@ def next_candidate_token(line, k):
         elif c in _WHITESPACE:
             k += 1
         elif c in _SINGLE_CHAR_TOKENS:
-            return c, k+1
+            return c, k + 1
         elif c == '#':  # Boolean values #t and #f
-            return line[k:k+2], min(k+2, len(line))
+            return line[k:k + 2], min(k + 2, len(line))
         else:
             j = k
             while j < len(line) and line[j] not in _TOKEN_END:
                 j += 1
             return line[k:j], min(j, len(line))
     return None, len(line)
+
 
 def tokenize_line(line):
     """The list of Scheme tokens on line.  Excludes comments and whitespace."""
@@ -79,15 +81,20 @@ def tokenize_line(line):
         else:
             print("warning: invalid token: {0}".format(text), file=sys.stderr)
             print("    ", line, file=sys.stderr)
-            print(" " * (i+3), "^", file=sys.stderr)
+            print(" " * (i + 3), "^", file=sys.stderr)
         text, i = next_candidate_token(line, i)
     return result
+
 
 def tokenize_lines(input):
     """An iterator that returns lists of tokens, one for each line of the
     iterable input sequence."""
     return map(tokenize_line, input)
 
+
 # exp = 'define (add x y) (+ x y)'
 exp = '(+ 1 (* 2.3 45))'
 print(tokenize_line(exp))
+lines = ['(+ 1', '   (* 2.3 45))']
+print(list(tokenize_lines(lines)))
+
