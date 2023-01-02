@@ -93,8 +93,8 @@ def tokenize_lines(input):
 
 
 # exp = 'define (add x y) (+ x y)'
-exp = '(+ 1 (* 2.3 45))'
-print(tokenize_line(exp))
-lines = ['(+ 1', '   (* 2.3 45))']
-print(list(tokenize_lines(lines)))
+# exp = '(+ 1 (* 2.3 45))'
+# print(tokenize_line(exp))
+# lines = ['(+ 1', '   (* 2.3 45))']
+# print(list(tokenize_lines(lines)))
 

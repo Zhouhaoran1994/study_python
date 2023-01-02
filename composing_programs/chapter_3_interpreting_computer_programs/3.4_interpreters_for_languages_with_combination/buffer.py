@@ -65,34 +65,43 @@ class Buffer:
     # 2: >>
     #
 
-    # def __str__(self):
-    #     """Return recently read contents; current element marked with >>."""
-    #     # Format string for right-justified line numbers
-    #     n = len(self.lines)
-    #     msg = '{0:>' + str(math.floor(math.log10(n)) + 1) + "}: "
-    #
-    #     # Up to three previous lines and current line are included in output
-    #     s = ''
-    #     for i in range(max(0, n - 4), n - 1):
-    #         s += msg.format(i + 1) + ' '.join(map(str, self.lines[i])) + '\n'
-    #     s += msg.format(n)
-    #     s += ' '.join(map(str, self.current_line[:self.index]))
-    #     s += ' >> '
-    #     s += ' '.join(map(str, self.current_line[self.index:]))
-    #     return s.strip()
-
-    def __repr__(self):
+    def __str__(self):
+        """Return recently read contents; current element marked with >>."""
+        # Format string for right-justified line numbers
         n = len(self.lines)
+        msg = '{0:>' + str(math.floor(math.log10(n)) + 1) + "}: "
+
+        # Up to three previous lines and current line are included in output
         s = ''
-        msg = '{0}: '
-        for i in range(n-1):
-            s += '{0}: '.format(i+1) + ' '.join(map(str, self.lines[i])) + '\n'
+        for i in range(max(0, n - 4), n - 1):
+            s += msg.format(i + 1) + ' '.join(map(str, self.lines[i])) + '\n'
         s += msg.format(n)
         s += ' '.join(map(str, self.current_line[:self.index]))
         s += ' >> '
         s += ' '.join(map(str, self.current_line[self.index:]))
         return s.strip()
 
+    # def __repr__(self):
+    #     n = len(self.lines)
+    #     s = ''
+    #     msg = '{0}: '
+    #     for i in range(n-1):
+    #         s += '{0}: '.format(i+1) + ' '.join(map(str, self.lines[i])) + '\n'
+    #     s += msg.format(n)
+    #     s += ' '.join(map(str, self.current_line[:self.index]))
+    #     s += ' >> '
+    #     s += ' '.join(map(str, self.current_line[self.index:]))
+    #     return s.strip()
+
+class InputReader(object):
+    """An InputReader is an iterable that prompts the user for input."""
+    def __init__(self, prompt):
+        self.prompt = prompt
+
+    def __iter__(self):
+        while True:
+            yield input(self.prompt)
+            self.prompt = ' ' * len(self.prompt)
 
 if __name__ == '__main__':
     buf = Buffer(iter([['(', '+'], [15], [12, ')']]))
@@ -100,4 +109,3 @@ if __name__ == '__main__':
     buf.pop()
     buf.pop()
     buf.pop()
-    print(repr(buf))
