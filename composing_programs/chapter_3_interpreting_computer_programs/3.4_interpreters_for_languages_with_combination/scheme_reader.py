@@ -164,4 +164,4 @@ if __name__ == '__main__':
     src = Buffer(result)
     output = scheme_read(src)
     print(output)
-
+    print(repr(output))
