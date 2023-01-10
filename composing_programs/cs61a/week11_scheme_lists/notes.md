@@ -12,3 +12,9 @@
 ~~~
 
 ## Even Subsets Using Filter
+
+用filter改写上述需求
+
+~~~
+
+~~~
